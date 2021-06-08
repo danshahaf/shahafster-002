@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title> Shahafster </title>
+
+        <!-- JQUERY LINKS AND CONNECTIONS -->
+        <script src = "https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity = "sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin = "anonymous"> </script>
+        <script src = "https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"> </script>         
+
+        <!-- MY CSS FILE -->
+        <link rel = "stylesheet" type = "text/css" href = "main.css">
+
+        <!-- MY JAVASCRIPT FILE -->
+        <script src = "main.js"></script>
+    </head>
+
+    <body>
+        <div class = "container">
+            <div class = "upper">
+                <a href = "manage.html"> <img src = "attachments/logo_001.png" /> </a>
+            </div>
+            <div id = "blog">
+
+            </div>
+        </div>
+    </body>
+    
+    <script>
+        $(document).ready(function() {
+            $.ajax({
+                type: "POST",
+                url: "main.php",
+                data: {
+                    message: "load-blog-comments"
+                },
+                success: function(data) {
+                    $("#blog").html(data)
+                }
+            })
+        });
+    </script>
+</html>

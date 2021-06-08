@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title> Shahafster </title>
+        <meta charset = utf-8 />
+        <meta name = "viewport" content = "width=device-width, initial-scale=1">
+
+        <!-- JQUERY LINKS AND CONNECTIONS -->
+        <script src = "https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity = "sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin = "anonymous"> </script>
+        <script src = "https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"> </script>         
+
+        <!-- FONT LIBRARY ACCESS LINK -->
+        <script src="https://kit.fontawesome.com/e7abc33a63.js" crossorigin="anonymous"></script>
+   
+        <!-- ALERTIFY LIBRARY ACCESS LINKS -->
+        <script src="//cdn.jsdelivr.net/npm/alertifyjs@1.13.1/build/alertify.min.js"></script>
+        <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/alertifyjs@1.13.1/build/css/alertify.min.css"/>
+        <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/alertifyjs@1.13.1/build/css/themes/default.min.css"/>
+        <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/alertifyjs@1.13.1/build/css/themes/semantic.min.css"/>
+        <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/alertifyjs@1.13.1/build/css/themes/bootstrap.min.css"/>
+        <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/alertifyjs@1.13.1/build/css/alertify.rtl.min.css"/>
+        <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/alertifyjs@1.13.1/build/css/themes/default.rtl.min.css"/>
+        <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/alertifyjs@1.13.1/build/css/themes/semantic.rtl.min.css"/>
+        <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/alertifyjs@1.13.1/build/css/themes/bootstrap.rtl.min.css"/>
+
+        <!-- MY CSS FILE -->
+        <link rel = "stylesheet" type = "text/css" href = "main.css">
+
+        <!-- MY JAVASCRIPT FILE -->
+        <script src = "main.js"></script>
+    </head>
+
+    <body>
+        <div class = "container">
+            <div class = "upper">
+                <button class = "menu" id = "manage-menu-btn" onclick = "slideSidebar()"> <i class = "fas fa-bars"></i> </button>
+                <a href = "index.html"> <img src = "attachments/logo_001.png" /> </a>
+            </div>
+            <div id = "content">
+                <div id = "sidebar-menu" class = "sidebar-close-animation">
+                    <button class = "menu-option" id = "menu-btn-posts" onclick = "show_section(this.id.substring(9, this.id.length));"> Posts </button>
+                    <button class = "menu-option" id = "menu-btn-labels" onclick = "show_section(this.id.substring(9, this.id.length)); show_labels();"> Labels </button>
+                    <button class = "menu-option" id = "menu-btn-users" onclick = "show_section(this.id.substring(9, this.id.length))"> Users </button>
+                    <button class = "menu-option" id = "menu-btn-tags" onclick = "show_section(this.id.substring(9, this.id.length))"> Tags </button>
+                </div>
+                
+                <div id = "sections">
+                    <div id = "posts" style = "display: block" name = "section">
+
+                    </div>
+        
+                    <div id = "labels" style = "display: none" name = "section">
+                        <div id = "label-prompter">
+                            Add Label: &nbsp;
+                            <input id = "new-label-text" type = "text" placeholder = "Name" />
+                            <input id = "new-label-color" type = "text" placeholder = "Color" />
+                            <button class = "green" onclick = "submit_new_label(document.getElementById('new-label-text').value, document.getElementById('new-label-color').value)"> <i class = "fa fa-check"></i></button>
+                        </div>
+                        <div id = "populated-labels">
+
+                        </div>
+                    </div>
+        
+                    <div id = "users" style = "display: none" name = "section">
+        
+                    </div>
+        
+                    <div id = "tags" style = "display: none" name = "section">
+        
+                    </div>
+                </div>
+            </div>
+
+            
+        </div>
+    </body>
+    
+    <script>
+        
+        
+        // ------------------ POPULATION FUNCTIONS ------------------
+        function show_labels() {
+            console.log("Walla");
+            $.ajax({
+                type: "POST",
+                url: "main.php",
+                data: {
+                    message: "populate-labels"
+                },
+                success: function(data) {
+                    $("#populated-labels").html(data);
+                }
+            });
+        }
+        
+        
+        // -------- SUBMIT NEW DATA ------------
+        function submit_new_label(text, color_passed) {
+            $.ajax({
+                type: "POST",
+                url: "main.php",
+                data: {
+                    message: "new-label",
+                    name: text,
+                    color: color_passed
+                },
+                success: function(data) {
+                    $("#populated-labels").html(data);
+                    document.getElementById("new-label-text").value = "";
+                    document.getElementById("new-label-color").value = "";
+                }
+            });
+        }
+        
+        // -------- SHOW MENU OPTION BUTTONS IN ALERTIFY ------------
+        var sidebarShown = true;
+        function slideSidebar() {
+            var sidebar = document.getElementById("sidebar-menu");
+            var sections = document.getElementById("sections"); 
+            if (sidebarShown) {
+                sidebar.className = "sidebar-open-animation";
+                sections.className = "sections-with-sidebar";
+            }
+            else {
+                sidebar.className = "sidebar-close-animation";
+                sections.className = "sections-without-sidebar";
+            }
+            sidebarShown = !sidebarShown;
+        }
+
+       
+        // -------- SHOW MENU SELECTED SECTION ------------
+        function show_section(sectionid) {
+            alertify.closeAll();
+            var sections = document.getElementsByClassName("section");
+            for (i = 0; i < sections.length; i++) {
+                sections[i].style.display = "none";
+            }
+            document.getElementById(sectionid).style.display = "block";
+            if (sectionid == "labels") populate_labels();
+            else if (sectionid == "tags") populate_tags();
+            else if (sectionid == "users") populate_users();
+            else if (sectionid == "posts") populate_posts();
+        }
+
+        function populate_labels() {
+            $.ajax({
+                type: "POST",
+                url: "main.php",
+                data: {
+                    message: "populate-labels"
+                },
+                success: function(data) {
+                    $("#blog").html(data)
+                }
+            })
+        }
+
+
+        // --------- ASSIST FUNCTIONS ------------------
+        alertify.minimalDialog || alertify.dialog('minimalDialog',function(){
+            return {
+                main:function(content){
+                    this.setContent(content); 
+                }
+            };
+        });
+
+
+    </script>
+</html>

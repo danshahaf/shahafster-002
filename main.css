@@ -1,0 +1,205 @@
+/* ------------------ GENERAL -------------------- */
+.green {
+    background-color: rgb(138, 255, 138);
+    border-color: rgb(73, 136, 73);
+}
+.round {
+    border-radius: 150px;
+}
+
+/* ------------------ CONTAINERS -------------------- */
+html {
+    padding: 0px;
+    margin: 0px;
+    width: 100%;
+    height: 100%;
+}
+body {
+    width: 100%;
+    height: 100%;
+    padding: 0px;
+    margin: 0px;
+    z-index: 1;
+}
+.container {
+    padding: 0%;
+    position: absolute;
+    height: 100%;
+    width: 100% !important;
+}
+
+/* ----------------- UPPER CONTAINER --------------------- */
+div.container div.upper{
+    background-color: rgb(134, 134, 255);
+    text-align: center;
+    border-bottom: 4px solid black;
+    display: flex;
+    padding: 12px 5%;
+    align-items: center;
+}
+
+div.container div.upper a {
+    margin: 0px;
+    padding: 0px;
+    padding: 10px;
+    flex: 19;
+}
+
+div.container div.upper button.menu {
+    background-color: rgb(109, 109, 231);
+    color: black;
+    border: 1px solid black;
+    border-radius: 1px;
+    box-shadow: 3px 3px 6px #505050;
+    padding: 0px 1px;
+    flex: 1;
+    width: 40px;
+    height: 50px;
+}
+
+div.container div#content div#sections {
+    position: absolute;
+    display: inline-block;
+
+}
+
+
+/* --------------- SIDEBAR ------------ */
+div#content div#sidebar-menu {
+    width: 11%;
+    border-right: 4px solid black;
+    max-height: 100%;
+    position: fixed;
+    display: inline-block;
+    z-index: 400;
+    overflow: auto;
+    height: 100%;
+    background-color: rgb(226, 226, 226);
+    box-sizing: border-box;
+}
+
+div#content div#sections {
+    list-style-type: none;
+    position: absolute;
+    display: inline-block;
+    padding: 25px;
+}
+
+div#content div#sidebar-menu button.menu-option {
+    background-color: rgb(109, 109, 231);
+    box-shadow: 3px 3px 6px #505050;
+    border-radius: 3px;
+    color: black;
+    border: 1px solid black;
+    color: black;
+    font-size: 125%;
+    font-weight: bolder;
+    font-family: sans-serif;
+    width: 70%;
+    margin: 10px 15%;
+    padding: 8px 5px;
+}
+
+.sections-without-sidebar {
+    margin-left: 0%;
+    width: 100%;
+    animation: slide-to-sidebar 0.4s ease-in-out;
+}
+@keyframes slide-to-sidebar {
+    from {
+        width: 75%;
+        margin-left: 15%;
+    }
+    to {
+        width: 90%;
+        margin-left: 0%;
+    }
+}
+.sections-with-sidebar {
+    width: 89%;
+    margin-left: 11%;
+    animation: slide-from-sidebar 0.4s ease-in-out;
+}
+@keyframes slide-from-sidebar {
+    from {
+        width: 90%;
+        margin-left: 0%;
+    }
+    to {
+        width: 75%;
+        margin-left: 15%;
+    }
+}
+
+.sidebar-open-animation {
+    animation: sidebar-open-slide 0.4s ease-in-out;
+    margin-left: 0%;
+}
+@keyframes sidebar-open-slide {
+    from {margin-left: -11%; }
+    to {margin-left: 0%;}
+}
+.sidebar-close-animation {
+    animation: sidebar-close-slide 0.4s ease-in-out;
+    margin-left: -11%;
+}
+@keyframes sidebar-close-slide {
+    from {margin-left: 0%;}
+    to {margin-left: -11%;}
+}
+
+
+
+/* --------------- LABELS ------------ */
+div#labels div#label-prompter input {
+    padding: 5px;
+    border: 0px;
+    border-bottom: 2px solid black;
+    font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+    width: 150px;
+    font-size: 17px;
+
+}
+div#labels div#label-prompter button {
+    padding: 5px;
+    font-size: 17px;
+    border: 2px;
+    border-radius: 5px;
+
+} 
+
+
+
+div#populated-labels {
+    display: grid;
+    grid-gap: 1rem;
+    row-gap: 2rem;
+    grid-template-columns: repeat(6, 1fr);
+    margin-top: 15px;
+}
+
+div.label-container {
+    border: 1px solid black;
+    border-radius: 150px;
+    padding: 2px;
+    width: 150px !important;
+    font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+    font-size: 25px;
+}
+
+div.label-container h4 {
+    margin: 0px !important;
+    padding: 0px !important;
+    border-radius: 150px;
+    height: 35px;
+    width: 35px;
+    display: inline-block;
+    border: 1px solid black;
+    
+}
+div.label-container h5 {
+    margin: 0px !important;
+    padding: 0px !important;
+    display: inline-block;
+
+}
