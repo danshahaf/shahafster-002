@@ -38,7 +38,7 @@
             </div>
             <div id = "content">
                 <div id = "sidebar-menu" class = "sidebar-close-animation">
-                    <button class = "menu-option" id = "menu-btn-posts" onclick = "show_section(this.id.substring(9, this.id.length));"> Posts </button>
+                    <button class = "menu-option" id = "menu-btn-posts" onclick = "show_section(this.id.substring(9, this.id.length)); show_posts();" > Posts </button>
                     <button class = "menu-option" id = "menu-btn-labels" onclick = "show_section(this.id.substring(9, this.id.length)); show_labels();"> Labels </button>
                     <button class = "menu-option" id = "menu-btn-users" onclick = "show_section(this.id.substring(9, this.id.length))"> Users </button>
                     <button class = "menu-option" id = "menu-btn-tags" onclick = "show_section(this.id.substring(9, this.id.length))"> Tags </button>
@@ -46,7 +46,23 @@
                 
                 <div id = "sections">
                     <div id = "posts" style = "display: block" name = "section">
+                        <div id = "post-prompter">
+                            <textarea id = "new-post-text" placeholder = "Add New Post!" rows = "7"></textarea>
+                            <br>
+                            <div id = "new-post-label-selection">
 
+                            </div>
+                            <br>
+                            <div id = "new-post-emoji-selection">
+
+                            </div>
+                            <br>
+                            <input id = "new-post-file" type = "file" />
+                            <button class = "green">Submit </button>
+                        </div>
+                        <div id = "populated-posts">
+
+                        </div>
                     </div>
         
                     <div id = "labels" style = "display: none" name = "section">
@@ -57,7 +73,7 @@
                             <button class = "green" onclick = "submit_new_label(document.getElementById('new-label-text').value, document.getElementById('new-label-color').value)"> <i class = "fa fa-check"></i></button>
                         </div>
                         <div id = "populated-labels">
-
+                            <!-- TO BE POPULATED BY PHP AND AJAX -->
                         </div>
                     </div>
         
@@ -79,8 +95,23 @@
         
         
         // ------------------ POPULATION FUNCTIONS ------------------
+        
+        function show_posts() {
+            console.log("posts are now displayed in backend page");
+            $.ajax({
+                type: "POST",
+                url: "main.php",
+                data: {
+                    message: "populate-posts-backend"
+                },
+                success: function(data) {
+                    $("#populated-posts").html(data);
+                }
+            });
+        }
+        
         function show_labels() {
-            console.log("Walla");
+            console.log("Labels are now displayed in backend page");
             $.ajax({
                 type: "POST",
                 url: "main.php",
@@ -131,16 +162,11 @@
        
         // -------- SHOW MENU SELECTED SECTION ------------
         function show_section(sectionid) {
-            alertify.closeAll();
             var sections = document.getElementsByClassName("section");
             for (i = 0; i < sections.length; i++) {
                 sections[i].style.display = "none";
             }
             document.getElementById(sectionid).style.display = "block";
-            if (sectionid == "labels") populate_labels();
-            else if (sectionid == "tags") populate_tags();
-            else if (sectionid == "users") populate_users();
-            else if (sectionid == "posts") populate_posts();
         }
 
         function populate_labels() {

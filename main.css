@@ -148,7 +148,14 @@ div#content div#sidebar-menu button.menu-option {
     to {margin-left: -11%;}
 }
 
-
+/* --------------- POSTS ------------ */
+div#sections div#posts div#post-prompter textarea {
+    border: 0px;
+    border-left: 3px solid black;
+    height: auto;
+    width: 75%;
+    padding: 2px 20px;
+}
 
 /* --------------- LABELS ------------ */
 div#labels div#label-prompter input {
@@ -167,9 +174,6 @@ div#labels div#label-prompter button {
     border-radius: 5px;
 
 } 
-
-
-
 div#populated-labels {
     display: grid;
     grid-gap: 1rem;
