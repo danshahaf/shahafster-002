@@ -6,7 +6,7 @@
         $password = "Sdan3189";
         $dsn = 'mysql:dbname=shahafster;host=127.0.0.1;port=3306;socket=/tmp/mysql.sock';        
         try {$conn = new PDO($dsn, $username, $password);}
-        catch(PDOException $e) {return $conn;}
+        catch(PDOException $e) {return $e;}
         return $conn;
 
 

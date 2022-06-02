@@ -8,7 +8,8 @@
         <!-- JQUERY LINKS AND CONNECTIONS -->
         <script src = "https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity = "sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin = "anonymous"> </script>
         <script src = "https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"> </script>         
-
+        <!-- <script src = "/Library/WebServer/Documents/web-projects/shahafster/node_modules/jquery/src/jquery.js"></script> -->
+        <script type="text/javascript" src = "./node_modules/jquery/src/jquery.js"></script>
         <!-- FONT LIBRARY ACCESS LINK -->
         <script src="https://kit.fontawesome.com/e7abc33a63.js" crossorigin="anonymous"></script>
    
@@ -47,18 +48,44 @@
                 <div id = "sections">
                     <div id = "posts" style = "display: block" name = "section">
                         <div id = "post-prompter">
+                            <h3> Submit New Post !</h3>
+                            </br>
+                
                             <textarea id = "new-post-text" placeholder = "Add New Post!" rows = "7"></textarea>
-                            <br>
+                            <br/>
                             <div id = "new-post-label-selection">
-
+                                <!-- TO BE POOPULATED WITH PHP -->
                             </div>
-                            <br>
+                            <br/>
                             <div id = "new-post-emoji-selection">
-
+                                
+                                <label for = "moji_01">	
+                                    &#128514;
+                                    <input type="checkbox" name = "moji_01" class = "moji-choice" checked/>
+                                </label>
+                                <label for = "moji_02">	
+                                    &#128517;
+                                    <input type="checkbox" name = "moji_02" class = "moji-choice"/>
+                                </label>
+                                <label for = "moji_03">	
+                                    &#128526;
+                                    <input type="checkbox" name = "moji_03" class = "moji-choice"/>
+                                </label>
+                                <label for = "moji_04">	
+                                    &#128542;
+                                    <input type="checkbox" name = "moji_04" class = "moji-choice"/>
+                                </label>
+                                <label for = "moji_05">	
+                                    &#128545;
+                                    <input type="checkbox" name = "moji_05" class = "moji-choice"/>
+                                </label>
                             </div>
-                            <br>
-                            <input id = "new-post-file" type = "file" />
-                            <button class = "green">Submit </button>
+                            <br/>
+                            <div class = "input-file-container">
+                                <input id = "new-post-file" class = "new-post-file" type = "file" name = "new-post-file" />
+                                <label for = "new-post-file"> Choose File </label>
+                                <button class = "green" id = "new_post_submit" onclick = "submit_new_post()">Submit </button>
+                            </div>                        
                         </div>
                         <div id = "populated-posts">
 
@@ -92,7 +119,22 @@
     </body>
     
     <script>
-        
+        function submit_new_post() {
+            texttopost = document.getElementById('new-post-text').value;
+            console.log(texttopost)
+            $.ajax({
+                type: "POST",
+                url: "main.php",
+                data: {
+                    message: "submit-new-post",
+                    text: texttopost
+                },
+                success: function(data) {
+                    $("#populated-posts").html(data);
+                    console.log("Successfully Posted New Post to DB");
+                }
+            });
+        }
         
         // ------------------ POPULATION FUNCTIONS ------------------
         
@@ -106,6 +148,7 @@
                 },
                 success: function(data) {
                     $("#populated-posts").html(data);
+                    console.log(data)
                 }
             });
         }
@@ -120,6 +163,7 @@
                 },
                 success: function(data) {
                     $("#populated-labels").html(data);
+                    console.log("")
                 }
             });
         }
@@ -190,6 +234,10 @@
                     this.setContent(content); 
                 }
             };
+        });
+
+        $(document).ready(function() {
+            console.log("loading current blog updates")
         });
 
 
