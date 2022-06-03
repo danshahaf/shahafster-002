@@ -59,26 +59,21 @@
                             <br/>
                             <div id = "new-post-emoji-selection">
                                 
-                                <label for = "moji_01">	
-                                    &#128514;
-                                    <input type="checkbox" name = "moji_01" class = "moji-choice" checked/>
-                                </label>
-                                <label for = "moji_02">	
-                                    &#128517;
-                                    <input type="checkbox" name = "moji_02" class = "moji-choice"/>
-                                </label>
-                                <label for = "moji_03">	
-                                    &#128526;
-                                    <input type="checkbox" name = "moji_03" class = "moji-choice"/>
-                                </label>
-                                <label for = "moji_04">	
-                                    &#128542;
-                                    <input type="checkbox" name = "moji_04" class = "moji-choice"/>
-                                </label>
-                                <label for = "moji_05">	
-                                    &#128545;
-                                    <input type="checkbox" name = "moji_05" class = "moji-choice"/>
-                                </label>
+                                <input type="radio" name = "moji" id = "moji_01" value = "128514" class = "moji-choice"/>
+                                <label for = "moji_01">	&#128514;</label>
+
+                                <input type="radio" name = "moji" id = "moji_02" value = "128517" class = "moji-choice"/>
+                                <label for = "moji_02">	&#128517;</label>
+
+                                <input type="radio" name = "moji" id = "moji_03" value = "128526" class = "moji-choice"/>
+                                <label for = "moji_03">	&#128526;</label>
+
+                                <input type="radio" name = "moji" id = "moji_04" value = "128542" class = "moji-choice"/>
+                                <label for = "moji_04">	&#128542;</label>
+
+                                <input type="radio" name = "moji" id = "moji_05" value = "128545" class = "moji-choice"/>
+                                <label for = "moji_05">	&#128545;</label>
+
                             </div>
                             <br/>
                             <div class = "input-file-container">
@@ -88,16 +83,23 @@
                             </div>                        
                         </div>
                         <div id = "populated-posts">
-
+                            <!-- TO BE POPULATED BY PHP -->
                         </div>
                     </div>
         
-                    <div id = "labels" style = "display: none" name = "section">
+                    <div id = "labels" style = "display: hidden" name = "section">
                         <div id = "label-prompter">
-                            Add Label: &nbsp;
-                            <input id = "new-label-text" type = "text" placeholder = "Name" />
-                            <input id = "new-label-color" type = "text" placeholder = "Color" />
-                            <button class = "green" onclick = "submit_new_label(document.getElementById('new-label-text').value, document.getElementById('new-label-color').value)"> <i class = "fa fa-check"></i></button>
+                            <h3> Add New Label !</h3>
+                            </br>
+                            <input id = "new-label-text" type = "text" placeholder = "Name"  />
+                            </br>
+                            &nbsp;
+                            <div class = "input-submission-container">
+                                <input id = "new-label-color" type = "color" onchange = "update_presentation_color()" />
+                                <label for = "new-label-color" id = "new-label-color-label"> Select Color </label>
+                                <button class = "green" id = "submit_new_label" onclick = "submit_new_label(document.getElementById('new-label-text').value, document.getElementById('new-label-color').value)"> <i class = "fa fa-check"></i></button>
+                            </div>
+                            
                         </div>
                         <div id = "populated-labels">
                             <!-- TO BE POPULATED BY PHP AND AJAX -->
@@ -119,27 +121,9 @@
     </body>
     
     <script>
-        function submit_new_post() {
-            texttopost = document.getElementById('new-post-text').value;
-            console.log(texttopost)
-            $.ajax({
-                type: "POST",
-                url: "main.php",
-                data: {
-                    message: "submit-new-post",
-                    text: texttopost
-                },
-                success: function(data) {
-                    $("#populated-posts").html(data);
-                    console.log("Successfully Posted New Post to DB");
-                }
-            });
-        }
-        
-        // ------------------ POPULATION FUNCTIONS ------------------
+        // ----------------- POPULATION FUNCTIONS ------------------
         
         function show_posts() {
-            console.log("posts are now displayed in backend page");
             $.ajax({
                 type: "POST",
                 url: "main.php",
@@ -148,13 +132,11 @@
                 },
                 success: function(data) {
                     $("#populated-posts").html(data);
-                    console.log(data)
                 }
             });
         }
         
         function show_labels() {
-            console.log("Labels are now displayed in backend page");
             $.ajax({
                 type: "POST",
                 url: "main.php",
@@ -163,30 +145,70 @@
                 },
                 success: function(data) {
                     $("#populated-labels").html(data);
-                    console.log("")
                 }
             });
+        }
+
+        function update_presentation_color() {
+            var newcolor = document.getElementById("new-label-color").value;
+            var colorpickerlabel = document.getElementById("new-label-color-label");
+            colorpickerlabel.style.color = newcolor;
+            colorpickerlabel.style.backgroundColor = newcolor;
+            colorpickerlabel.style.borderColor = newcolor;
+            
         }
         
         
         // -------- SUBMIT NEW DATA ------------
         function submit_new_label(text, color_passed) {
-            $.ajax({
-                type: "POST",
-                url: "main.php",
-                data: {
-                    message: "new-label",
-                    name: text,
-                    color: color_passed
-                },
-                success: function(data) {
-                    $("#populated-labels").html(data);
-                    document.getElementById("new-label-text").value = "";
-                    document.getElementById("new-label-color").value = "";
-                }
-            });
+            if (text.length < 2) {
+                alertify.warning("Label Name Must be 2 characters or longer!");
+            } else {
+                $.ajax({
+                    type: "POST",
+                    url: "main.php",
+                    data: {
+                        message: "new-label",
+                        name: text,
+                        color: color_passed
+                    },
+                    success: function(data) {
+                        $("#populated-labels").html(data);
+                        document.getElementById("new-label-text").value = "";
+                        document.getElementById("new-label-color").value = "#000000";
+                    }
+                });
+            }
+            
         }
         
+        function submit_new_post() {
+            var texttopost = document.getElementById('new-post-text').value;
+            var postmoji = ($("input[type=radio][name=moji]:checked").val());
+            console.log(postmoji);
+            if (texttopost.length < 3) {
+                alertify.warning ("Submission Text must contain at least 3 characters!");
+                return;
+            } else {
+                $.ajax({
+                    type: "POST",
+                    url: "main.php",
+                    data: {
+                        message: "submit-new-post",
+                        text: texttopost,
+                        moji: postmoji
+                    },
+                    success: function(data) {
+                        document.getElementById('new-post-text').value = ""; //reset textarea
+                        alertify.success("New Post Submitted!");
+                        // $("#populated-posts").html(data);
+                        // console.log("Successfully Posted New Post to DB");
+                    }
+                });
+            }
+            
+        }
+
         // -------- SHOW MENU OPTION BUTTONS IN ALERTIFY ------------
         var sidebarShown = true;
         function slideSidebar() {
@@ -223,7 +245,7 @@
                 success: function(data) {
                     $("#blog").html(data)
                 }
-            })
+            });
         }
 
 
@@ -237,7 +259,16 @@
         });
 
         $(document).ready(function() {
-            console.log("loading current blog updates")
+            $.ajax({
+                type: "POST",
+                url: "main.php",
+                data: {
+                    message: "populate-posts-backend"
+                },
+                success: function(data) {
+                    $("#populated-posts").html(data)
+                }
+            });
         });
 
 

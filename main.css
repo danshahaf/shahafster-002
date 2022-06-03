@@ -1,8 +1,4 @@
 /* ------------------ GENERAL -------------------- */
-/* .green {
-    background-color: rgb(138, 255, 138);
-    border-color: rgb(73, 136, 73);
-} */
 .round {
     border-radius: 150px;
 }
@@ -88,15 +84,19 @@ div.blog div.post div.details {
 }
 div.blog div.post div.details p {
     margin: 0px !important;
-    font-size: 11px !important;
+    /* font-size: 11px !important; */
     flex: 1;
 }
 div.blog div.post div.details p.timestamp {
     flex: 1;
     text-align: right;
 }
+div.blog div.post div.details p.likes {
+    flex: 1;
+    text-align: center;
+}
 div.blog div.post div.text {
-    padding: 2px;
+    padding: 2px 6px;
 }
 div.blog div.post div.text p {
     margin: 0px !important;
@@ -288,36 +288,98 @@ div#sections div#posts div#post-prompter div.input-file-container button#new_pos
     margin: 1px 5px;
 }
 
-div#sections div#posts div#post-prompter div#new-post-emoji-selection input.moji-choice + label {
+div#sections div#posts div#post-prompter div#new-post-emoji-selection input[type="radio"].moji-choice {
+    opacity:0; 
+    position:absolute; 
     font-size: 16px !important;
 }
 
-div#sections div#posts div#post-prompter div#new-post-emoji-selection input.moji-choice {
-    opacity:0; 
-    position:absolute; 
+div#sections div#posts div#post-prompter div#new-post-emoji-selection input[type="radio"].moji-choice:checked + label {
+    font-size: 24px !important;
+    transition: all 0.3s ease-in-out;
 }
 
-div#sections div#posts div#post-prompter div#new-post-emoji-selection input.moji-choice:checked + label {
-    font-size: 22px !important;
+div#sections div#posts div#post-prompter div#new-post-emoji-selection input[type="radio"].moji-choice:not(:checked) + label {
+    font-size: 16px !important;
+    transition: all 0.3s ease-in-out;
 }
+
 
 /* --------------- LABELS ------------ */
-div#labels div#label-prompter input {
-    padding: 5px;
-    border: 0px;
-    border-bottom: 2px solid black;
-    font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
-    width: 150px;
-    font-size: 17px;
 
+div#sections div#labels {
+    text-align: center;
+    width: 100%;
 }
-div#labels div#label-prompter button {
-    padding: 5px;
-    font-size: 17px;
-    border: 2px;
-    border-radius: 5px;
 
-} 
+div#sections div#labels div#label-prompter {
+    border: 1px solid black;
+    border-radius: 0px;
+    padding: 10px;
+    margin: 25px 32%;
+    padding: 25px;
+    /* width: 100%; */
+    /* margin-left: 20%; */
+}
+
+div#sections div#labels div#label-prompter h3 {
+    margin: 0px !important;
+    font-family: "Gill Sans";
+}
+
+div#sections div#labels div#label-prompter input#new-label-text {
+    border: 0px;
+    border-left: 3px solid black;
+    height: auto;
+    width: 75%;
+    padding: 5px 20px;
+    background-color:rgb(226, 226, 226)
+}
+
+div#sections div#labels div#label-prompter div.input-submission-container {
+    /* width: 80% !important; */
+    display: flex;
+    justify-content: space-evenly !important;
+    align-items: baseline;
+}
+
+
+div#sections div#labels div#label-prompter div.input-submission-container #new-label-color {
+	width: 0.1px;
+	height: 0.1px;
+	opacity: 0;
+	overflow: hidden;
+	position: absolute;
+	z-index: -1;
+}
+
+div#sections div#labels div#label-prompter div.input-submission-container #new-label-color + label {
+    font-size: 18px;
+    padding: 5px;
+    font-family: "Gill Sans" !important;
+    background-color: white;
+    border: 3px solid red;
+    color: red;
+    border-radius: 7px;
+    flex: 1;
+    margin: 1px 5px;
+    /* visibility: hidden !important; */
+}
+
+div#sections div#labels div#label-prompter div.input-submission-container button#submit_new_label {
+    font-size: 18px;
+    padding: 5px;
+    font-family: "Gill Sans" !important;
+    /* background-color: rgb(36, 36, 36) !important; */
+    background-color: transparent;
+    border: 3px solid green;
+    color: green;
+    border-radius: 7px;
+    flex: 1;
+    margin: 1px 5px;
+}
+
+
 div#populated-labels {
     display: grid;
     grid-gap: 1rem;

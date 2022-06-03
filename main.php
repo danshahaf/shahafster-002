@@ -7,12 +7,14 @@
     
     if($_POST['message'] == "new-label") {echo add_label($_POST['name'], $_POST['color']);}
 
-    if($_POST['message'] == "submit-new-post") {echo submit_new_post($_POST['text']);}
+    if($_POST['message'] == "submit-new-post") {echo submit_new_post($_POST['text'], $_POST['moji']);}
+    
+    if($_POST['message'] == "populate-posts-backend") {echo populated_posts_backend();}
 
     // ------------------------------ FUNCTIONS --------------------------------
     
     
-    function submit_new_post($text) {
+    function submit_new_post($text, $moji) {
         try {
             $c = connDB(); //establish db connection
             $sql = "SELECT MAX(ID)+1 FROM Comment;";
@@ -20,8 +22,8 @@
             $s -> execute();
             if ($max = $s -> fetchColumn()) $id = $max;
             else $id = 1;   
-            
-            $sql = "INSERT INTO Comment (ID, Moji, Text, Timestamp, Label_ID) VALUES (".$id.", 0, '".$text."', NOW(), 1);";
+            // $moji = intval(substr($moji, 2, strlen($moji)));
+            $sql = "INSERT INTO Comment (ID, Moji, Text, Timestamp, Label_ID) VALUES (".$id.", ".$moji.", '".$text."', NOW(), 1);";
             $c -> setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
             $c -> exec($sql);
 
@@ -67,17 +69,12 @@
                 '
                     <div class = "post">
                         <div class = "details">
-                            <div class = "label-container">
-                                <h4 style = "background-color: '.$r['Color'].'; color: '.$r['Color'].';"> * </h4> 
-                                <h5> '.$r['Name'].' </h5>
-                            </div>
-                            <p class = "moji">&#'.$r['Moji'].'</p>
+                            <p class = "moji">&#'.$r['Moji'].';</p>
+                            <p class = "likes"> <i class="fa-solid fa-heart"></i> 4 </p>
                             <p class = "timestamp">'.substr($r['Timestamp'],11,5).'</p>
                         </div>
-                        <div class = "text">
-                            <p>
-                                >> '.$r['Text'].'
-                            </p>
+                        <div class = "text" style = "border-left: 5px solid '.$r['Color'].'">
+                            <p>'.$r['Text'].'</p>
                         </div>
                     </div>
                 ';
@@ -118,7 +115,7 @@
             if ($max = $s -> fetchColumn()) $id = $max;
             else $id = 1;   
             
-            $sql = "INSERT INTO Label (ID, Name, Color) VALUES (".$id.", '".$name."', '#".$color."');";
+            $sql = "INSERT INTO Label (ID, Name, Color) VALUES (".$id.", '".$name."', '".$color."');";
             $c -> setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
             $c -> exec($sql);
 
@@ -126,6 +123,49 @@
         } catch (PDOException $e) {return $e;}
 
         return populate_labels();
+    }
+
+    function populate_posts_backend() {
+        try {
+            $data = '';
+            $c = connDB();
+            $sql = "SELECT Timestamp FROM Comment ORDER BY Timestamp DESC LIMIT 1;";
+            $s = $c -> prepare($sql);
+            $s -> execute();
+            $t = $s -> fetch(PDO::FETCH_ASSOC);
+            $date = datetime_tonumbers_date($t['Timestamp']);
+            $data .= '<h3 class = "blog-group-date">'.reformat_numberdate($date).'</h3>';
+            // sql : desc = oldest date first, asc = neweset date first
+            $sql = "SELECT c.ID, c.Moji, c.Text, c.Timestamp, l.Name, l.Color FROM Comment as c JOIN Label as l WHERE c.Label_ID = l.ID ORDER BY c.Timestamp DESC;";
+            $s = $c -> prepare($sql);
+            $s -> execute();
+            while($r = $s -> fetch(PDO::FETCH_ASSOC)) {
+                if ($date != datetime_tonumbers_date($r['Timestamp'])) {
+                    $date = datetime_tonumbers_date($r['Timestamp']);
+                    $data .= '<h3 class = "blog-group-date">'.reformat_numberdate($date).'</h3>';
+                }
+
+                $data .=
+                '
+                    <div class = "edit-post">
+                        <div class = "details">
+                            <p class = "moji">&#'.$r['Moji'].'</p>
+                            <div class = "actions"> 
+                                <p class = "liked> <i class="fa-solid fa-heart"></i> 4 </p>
+                                <button class = "edit"> Edit </button>
+                                <button class = "delete"> <i class = "fa</button>
+                            </div>
+                            <p class = "timestamp">'.substr($r['Timestamp'],11,5).'</p>
+                        </div>
+                        <div class = "text" style = "border-left: 5px solid '.$r['Color'].'">
+                            <p>'.$r['Text'].'</p>
+                        </div>
+                    </div>
+                ';
+            }  
+            // $c = null;
+        } catch (PDOException $e) {return $e;}
+        return $data;
     }
 
 
