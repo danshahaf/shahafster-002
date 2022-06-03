@@ -7,14 +7,19 @@
     
     if($_POST['message'] == "new-label") {echo add_label($_POST['name'], $_POST['color']);}
 
-    if($_POST['message'] == "submit-new-post") {echo submit_new_post($_POST['text'], $_POST['moji']);}
+    if($_POST['message'] == "submit-new-post") {echo submit_new_post($_POST['text'], $_POST['moji'], $_POST['label']);}
     
     if($_POST['message'] == "populate-posts-backend") {echo populated_posts_backend();}
+    
+    if($_POST['message'] == "populate-labels-for-new-post") {echo populate_labels_for_new_post();}
 
     // ------------------------------ FUNCTIONS --------------------------------
+    function tag_recognition($text) {
+        
+    }
     
-    
-    function submit_new_post($text, $moji) {
+    function submit_new_post($text, $moji, $label) {
+        $text = tag_recognition($text);
         try {
             $c = connDB(); //establish db connection
             $sql = "SELECT MAX(ID)+1 FROM Comment;";
@@ -23,7 +28,7 @@
             if ($max = $s -> fetchColumn()) $id = $max;
             else $id = 1;   
             // $moji = intval(substr($moji, 2, strlen($moji)));
-            $sql = "INSERT INTO Comment (ID, Moji, Text, Timestamp, Label_ID) VALUES (".$id.", ".$moji.", '".$text."', NOW(), 1);";
+            $sql = "INSERT INTO Comment (ID, Moji, Text, Timestamp, Label_ID) VALUES (".$id.", ".$moji.", '".$text."', NOW(), ".$label.");";
             $c -> setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
             $c -> exec($sql);
 
@@ -125,7 +130,7 @@
         return populate_labels();
     }
 
-    function populate_posts_backend() {
+    function populated_posts_backend() {
         try {
             $data = '';
             $c = connDB();
@@ -151,9 +156,9 @@
                         <div class = "details">
                             <p class = "moji">&#'.$r['Moji'].'</p>
                             <div class = "actions"> 
-                                <p class = "liked> <i class="fa-solid fa-heart"></i> 4 </p>
-                                <button class = "edit"> Edit </button>
-                                <button class = "delete"> <i class = "fa</button>
+                                <button class = "likes"> <i class = "fa fa-heart" aria-hidden = "true"></i> &nbsp; 4 </button>
+                                <button class = "edit"> <i class = "fa fa-pencil"></i> &nbsp; Edit </button>
+                                <button class = "delete"> <i class = "fa fa-times"></i> &nbsp; Delete </button>
                             </div>
                             <p class = "timestamp">'.substr($r['Timestamp'],11,5).'</p>
                         </div>
@@ -162,6 +167,27 @@
                         </div>
                     </div>
                 ';
+            }  
+            // $c = null;
+        } catch (PDOException $e) {return $e;}
+        return $data;
+    }
+
+    function populate_labels_for_new_post() {
+        $checked = "checked";
+        try {
+            $data = '';
+            $c = connDB();
+            $sql = "SELECT ID, Name, Color FROM Label ORDER BY ID ASC;";
+            $s = $c -> prepare($sql);
+            $s -> execute();
+            while($r = $s -> fetch(PDO::FETCH_ASSOC)) {
+                $data .=
+                '
+                    <input type = "radio" name = "label" id = "label-'.$r['ID'].'" value = "'.$r['ID'].'" class = "label-choice" '.$checked.'/>
+                    <label for = "label-'.$r['ID'].'" style = "border: 3px solid '.$r['Color'].';"> '.$r['Name'].' </label>
+                ';
+                if($checked == "checked") $checked = "";
             }  
             // $c = null;
         } catch (PDOException $e) {return $e;}

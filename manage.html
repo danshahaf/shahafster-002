@@ -82,6 +82,8 @@
                                 <button class = "green" id = "new_post_submit" onclick = "submit_new_post()">Submit </button>
                             </div>                        
                         </div>
+                        <h3 class = "edi-posts" style = "font-family: 'Gill Sans';"> Edit Posts!</h3>
+
                         <div id = "populated-posts">
                             <!-- TO BE POPULATED BY PHP -->
                         </div>
@@ -185,7 +187,7 @@
         function submit_new_post() {
             var texttopost = document.getElementById('new-post-text').value;
             var postmoji = ($("input[type=radio][name=moji]:checked").val());
-            console.log(postmoji);
+            var postlabel = ($("input[type=radio][name=label]:checked").val());
             if (texttopost.length < 3) {
                 alertify.warning ("Submission Text must contain at least 3 characters!");
                 return;
@@ -196,11 +198,13 @@
                     data: {
                         message: "submit-new-post",
                         text: texttopost,
-                        moji: postmoji
+                        moji: postmoji,
+                        label: postlabel
                     },
                     success: function(data) {
                         document.getElementById('new-post-text').value = ""; //reset textarea
                         alertify.success("New Post Submitted!");
+                        console.log(data);
                         // $("#populated-posts").html(data);
                         // console.log("Successfully Posted New Post to DB");
                     }
@@ -259,6 +263,7 @@
         });
 
         $(document).ready(function() {
+            // ---- POPULATE POSTS TO EDIT
             $.ajax({
                 type: "POST",
                 url: "main.php",
@@ -269,6 +274,21 @@
                     $("#populated-posts").html(data)
                 }
             });
+
+
+            // ---- POPULATE LABELS FOR NEW POST
+            $.ajax({
+                type: "POST",
+                url: "main.php",
+                data: {
+                    message: "populate-labels-for-new-post"
+                },
+                success: function(data) {
+                    $("#new-post-label-selection").html(data)
+                }
+            });
+
+
         });
 
 
