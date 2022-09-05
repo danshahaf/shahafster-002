@@ -22,6 +22,8 @@ I designed and coded everything by myself first in 2020, but took down to the si
 6. The processed data is displayed properly via HTML and CSS to the guests and users of the site.
    
 ## Database: MySQL
+![](https://github.com/ShahafDan25/shahafster-002/blob/master/attachments/github_readme_002.png)
+
 
 ## Feature Design Flow Charts
 
