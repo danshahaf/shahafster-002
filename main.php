@@ -7,19 +7,85 @@
     
     if($_POST['message'] == "new-label") {echo add_label($_POST['name'], $_POST['color']);}
 
-    if($_POST['message'] == "submit-new-post") {echo submit_new_post($_POST['text'], $_POST['moji'], $_POST['label']);}
+    if($_POST['message'] == "submit-new-post") {echo submit_new_post($_POST['text'], $_POST['moji'], $_POST['label'], $_POST['media']);}
     
     if($_POST['message'] == "populate-posts-backend") {echo populated_posts_backend();}
     
     if($_POST['message'] == "populate-labels-for-new-post") {echo populate_labels_for_new_post();}
+    
+    if($_POST['message'] == "delete-post") {echo delete_post($_POST['id']);}
+    
+    if($_POST['message'] == "edit-post") {echo edit_post($_POST['id'], $_POST['text']);}
+    
+    if($_POST['message'] == "get-text-from-postid") {echo get_text_from_postid($_POST['id']);}
+
 
     // ------------------------------ FUNCTIONS --------------------------------
-    function tag_recognition($text) {
-        
+    function get_text_from_postid($postid) {
+        $text = "NOT-FETCHED";
+        try {
+            $c = connDB(); //establish db connection
+            $sql = "SELECT Text FROM Comment WHERE ID = ".$postid.";";
+            $s = $c -> prepare($sql);
+            $s -> execute();
+            $r = $s -> fetch(PDO::FETCH_ASSOC);
+            $text = $r['Text'];
+        } catch(PDOException $e) {
+            return "COULDN'T FETCH TEXT";
+        }
+        return $text;
     }
     
-    function submit_new_post($text, $moji, $label) {
-        $text = tag_recognition($text);
+    function edit_post($postid, $posttext) {
+        try {
+            $c = connDB(); //establish db connection
+            $sql = "UPDATE Comment SET Text = '".$posttext."' WHERE ID = ".$postid.";";
+            $c -> prepare($sql) -> execute();
+            $c = null; //reset connection
+        } catch(PDOException $e) {
+            return "POST NOT EDITED";
+        }
+        return populated_posts_backend();
+    }
+    
+    function delete_post($postid) {
+        $sql = "DELETE FROM Likes WHERE Comment_ID = ".$postid.";";
+        $sql .= "DELETE FROM Media WHERE Comment_ID = ".$postid.";";
+        $sql .= "DELETE FROM Comment WHERE ID = ".$postid.";";
+        try {  
+            $c = connDB(); //establish db connection
+            $c -> prepare($sql) -> execute();
+        } catch(PDOException $e) {
+            return "ERROR DELETING POST".$postid;
+        }
+        $c = null; //close connection
+        return populated_posts_backend();
+    }
+    
+    function tag_recognition($string) {
+        $sepChars = array(",", ".", "(", ")", ":", "!");
+        $hashtags = array();
+        if (preg_match_all('/#([^\s]+)/', $string, $hashtags)) {
+            for($item = 0; $item < count($hashtags[1]); $item++) {
+                $string = str_replace("#".$hashtags[1][$item], "<a class = 'tag-linker'>"."#".$hashtags[1][$item]."</a>", $string);
+            }
+        } //Add to database too (need to modify database for hashtags per post)
+        $nametags = array();
+        if (preg_match_all('/@([^\s]+)/', $string, $nametags)) {
+            for($item = 0; $item < count($nametags[1]); $item++) {
+                $string = str_replace("@".$nametags[1][$item], "<a class = 'tag-linker'>"."@".$nametags[1][$item]."</a>", $string);
+            }
+        } //add to db   
+        $placetags = array();
+        if (preg_match_all('/=([^\s]+)/', $string, $placetags)) {
+            for($item = 0; $item < count($placetags[1]); $item++) {
+                $string = str_replace("=".$placetags[1][$item], "<a class = 'tag-linker'>"."<i class = 'fa fa-map-marker'></i>".$placetags[1][$item]."</a>", $string);
+            }
+        } // add to db
+        return $string;
+    }
+    
+    function submit_new_post($text, $moji, $label, $media) {
         try {
             $c = connDB(); //establish db connection
             $sql = "SELECT MAX(ID)+1 FROM Comment;";
@@ -31,10 +97,23 @@
             $sql = "INSERT INTO Comment (ID, Moji, Text, Timestamp, Label_ID) VALUES (".$id.", ".$moji.", '".$text."', NOW(), ".$label.");";
             $c -> setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
             $c -> exec($sql);
+            if ($media != "False") {
+                $c = connDB(); //establish db connection
+                $sql = "SELECT MAX(ID)+1 FROM Media;";
+                $s = $c->prepare($sql);
+                $s -> execute();
+                if ($max = $s -> fetchColumn()) $mediaid = $max;
+                else $mediaid = 1;   
+                // $moji = intval(substr($moji, 2, strlen($moji)));
+                $sql = "INSERT INTO Media (ID, File, Comment_ID) VALUES (".$mediaid.", ".$moji.", '".$text."', NOW(), ".$label.");";
+                $c -> setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+                $c -> exec($sql);
+            } 
+            
 
             $c = null; //close connection
         } catch (PDOException $e) {return $e;}
-        return $text;
+        return populated_posts_backend();
     }
     
     function datetime_tonumbers_date($datetime) {
@@ -79,7 +158,7 @@
                             <p class = "timestamp">'.substr($r['Timestamp'],11,5).'</p>
                         </div>
                         <div class = "text" style = "border-left: 5px solid '.$r['Color'].'">
-                            <p>'.$r['Text'].'</p>
+                            <p>'.tag_recognition($r['Text']).'</p>
                         </div>
                     </div>
                 ';
@@ -156,14 +235,14 @@
                         <div class = "details">
                             <p class = "moji">&#'.$r['Moji'].'</p>
                             <div class = "actions"> 
-                                <button class = "likes"> <i class = "fa fa-heart" aria-hidden = "true"></i> &nbsp; 4 </button>
-                                <button class = "edit"> <i class = "fa fa-pencil"></i> &nbsp; Edit </button>
-                                <button class = "delete"> <i class = "fa fa-times"></i> &nbsp; Delete </button>
+                                <button class = "likes" onclick = "show_likes('.$r['ID'].')"> <i class = "fa fa-heart" aria-hidden = "true"></i> &nbsp; 4 </button>
+                                <button class = "edit" onclick = "edit_post('.$r['ID'].')"> <i class = "fa fa-pencil"></i> &nbsp; Edit </button>
+                                <button class = "delete" onclick = "delete_post('.$r['ID'].')"> <i class = "fa fa-times"></i> &nbsp; Delete </button>
                             </div>
                             <p class = "timestamp">'.substr($r['Timestamp'],11,5).'</p>
                         </div>
                         <div class = "text" style = "border-left: 5px solid '.$r['Color'].'">
-                            <p>'.$r['Text'].'</p>
+                            <p>'.tag_recognition($r['Text']).'</p>
                         </div>
                     </div>
                 ';

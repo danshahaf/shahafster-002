@@ -160,6 +160,68 @@
             
         }
         
+        // --------- POST ACTIONS ------------
+        function show_likes(postid) { // TODO
+            console.log("SHOWING LIKES OF THIS POST")
+        }
+
+        async function get_text_from_postid(postid) {
+            d = "NOT-FETCHED"
+            await $.ajax({
+                type: "POST",
+                url: "main.php",
+                data: {
+                    message: "get-text-from-postid",
+                    id: postid
+                },
+                success: function(data) {
+                    d = data
+                }
+            });
+            return d
+        }
+
+        async function edit_post(postid) {
+            posttext = await get_text_from_postid(postid);
+            alertify.prompt(
+                '>> EDIT POST ',
+                'Edit Post ' + postid,
+                posttext, 
+                function(evt, value) {
+                    $.ajax({
+                        type: "POST",
+                        url: "main.php",
+                        data: {
+                            message: "edit-post",
+                            id: postid,
+                            text: value
+                        },
+                        success: function(data) {
+                            $("#populated-posts").html(data);
+                        }
+                    });
+                },
+                function() {
+                    alertify.error("CANCEL")
+                }
+            );
+            
+        }
+
+        function delete_post(postid) {
+            console.log("DELETING POST" + postid)
+            $.ajax({
+                type: "POST",
+                url: "main.php",
+                data: {
+                    message: "delete-post",
+                    id: postid
+                },
+                success: function(data) {
+                    $("#populated-posts").html(data);
+                }
+            });
+        }
         
         // -------- SUBMIT NEW DATA ------------
         function submit_new_label(text, color_passed) {
@@ -188,6 +250,16 @@
             var texttopost = document.getElementById('new-post-text').value;
             var postmoji = ($("input[type=radio][name=moji]:checked").val());
             var postlabel = ($("input[type=radio][name=label]:checked").val());
+
+            var media_final = "False"
+            // if(document.getElementById("new-post-file").value == "") {
+            //     var media_final = "FALSE";
+            // } else {
+            //     var file_data = $('#new-post-file').prop('files')[0]
+            //     var media_final = new FormData()
+            //     media_final.append('file', file_data)
+            // }
+
             if (texttopost.length < 3) {
                 alertify.warning ("Submission Text must contain at least 3 characters!");
                 return;
@@ -199,13 +271,13 @@
                         message: "submit-new-post",
                         text: texttopost,
                         moji: postmoji,
-                        label: postlabel
+                        label: postlabel,
+                        media: media_final
                     },
                     success: function(data) {
                         document.getElementById('new-post-text').value = ""; //reset textarea
                         alertify.success("New Post Submitted!");
-                        console.log(data);
-                        // $("#populated-posts").html(data);
+                        $("#populated-posts").html(data);
                         // console.log("Successfully Posted New Post to DB");
                     }
                 });

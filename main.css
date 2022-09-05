@@ -29,6 +29,10 @@ div#content {
 div#content div#sections {
     width: 100%;
 }
+
+a.tag-linker {
+    color: rgb(135, 135, 255);
+}
 /* ----------------- UPPER CONTAINER --------------------- */
 div.container div.upper{
     background-color: rgb(134, 134, 255);
@@ -37,6 +41,8 @@ div.container div.upper{
     display: flex;
     padding: 12px 5%;
     align-items: center;
+    /* position: fixed; */
+    width: 100%;
 }
 
 div.container div.upper a {
@@ -138,6 +144,10 @@ div.post div.details div.label-container h5 {
 }
 
 
+
+
+
+
 /* --------------- SIDEBAR ------------ */
 div#content div#sidebar-menu {
     width: 11%;
@@ -214,6 +224,15 @@ div#content div#sidebar-menu button.menu-option {
     from {margin-left: 0%;}
     to {margin-left: -11%;}
 }
+
+
+
+
+
+
+
+
+
 
 /* --------------- POSTS ------------ */
 div#sections div#posts {
@@ -428,6 +447,23 @@ div#sections div#posts div#populated-posts div.details div.label-container h5 {
     display: inline-block;
 
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 /* --------------- LABELS ------------ */
 

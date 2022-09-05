@@ -1,0 +1,146 @@
+Last login: Fri Sep  2 21:32:35 on ttys000
+(base) shahafdan@shahafs-mbp ~ % mysqlsh
+MySQL Shell 8.0.21
+
+Copyright (c) 2016, 2020, Oracle and/or its affiliates. All rights reserved.
+Oracle is a registered trademark of Oracle Corporation and/or its affiliates.
+Other names may be trademarks of their respective owners.
+
+Type '\help' or '\?' for help; '\quit' to exit.
+ MySQL  JS > \sql
+Switching to SQL mode... Commands end with ;
+ MySQL  SQL > \connect root@localhost
+Creating a session to 'root@localhost'
+Fetching schema names for autocompletion... Press ^C to stop.
+Your MySQL connection id is 77 (X protocol)
+Server version: 8.0.30 Homebrew
+No default schema selected; type \use <schema> to set one.
+ MySQL  localhost:33060+ ssl  SQL > show schemas;
++--------------------+
+| Database           |
++--------------------+
+| alpha              |
+| greenbadge         |
+| information_schema |
+| mydb               |
+| mysql              |
+| performance_schema |
+| shahafster         |
+| sys                |
+| toury              |
++--------------------+
+9 rows in set (0.0052 sec)
+ MySQL  localhost:33060+ ssl  SQL > DROP SCHEMA greenbadge
+                                 -> ;
+Query OK, 2 rows affected (0.1372 sec)
+ MySQL  localhost:33060+ ssl  SQL > DROP SCHEMA toury
+                                 -> ;
+Query OK, 0 rows affected (0.0039 sec)
+ MySQL  localhost:33060+ ssl  SQL > show schemas
+                                 -> ;
++--------------------+
+| Database           |
++--------------------+
+| alpha              |
+| information_schema |
+| mydb               |
+| mysql              |
+| performance_schema |
+| shahafster         |
+| sys                |
++--------------------+
+7 rows in set (0.0026 sec)
+ MySQL  localhost:33060+ ssl  SQL > use shahafster
+Default schema set to `shahafster`.
+Fetching table and column names from `shahafster` for auto-completion... Press ^C to stop.
+ MySQL  localhost:33060+ ssl  shahafster  SQL > show tables;
++----------------------+
+| Tables_in_shahafster |
++----------------------+
+| Comment              |
+| Label                |
+| Likes                |
+| Logs                 |
+| Media                |
+| Tags                 |
+| User                 |
++----------------------+
+7 rows in set (0.0038 sec)
+ MySQL  localhost:33060+ ssl  shahafster  SQL > DROP TABLE Tags
+                                             -> ;
+Query OK, 0 rows affected (0.0242 sec)
+ MySQL  localhost:33060+ ssl  shahafster  SQL > show tables
+                                             -> ;
++----------------------+
+| Tables_in_shahafster |
++----------------------+
+| Comment              |
+| Label                |
+| Likes                |
+| Logs                 |
+| Media                |
+| User                 |
++----------------------+
+6 rows in set (0.0027 sec)
+ MySQL  localhost:33060+ ssl  shahafster  SQL > DESCRIBE Labale;
+ERROR: 1146: Table 'shahafster.labale' doesn't exist
+ MySQL  localhost:33060+ ssl  shahafster  SQL > DESCRIBE Logs
+                                             -> ;
++-----------+----------+------+-----+---------+-------+
+| Field     | Type     | Null | Key | Default | Extra |
++-----------+----------+------+-----+---------+-------+
+| ID        | int      | NO   | PRI | NULL    |       |
+| Timestamp | datetime | NO   |     | NULL    |       |
+| User_ID   | int      | NO   | PRI | NULL    |       |
++-----------+----------+------+-----+---------+-------+
+3 rows in set (0.0024 sec)
+ MySQL  localhost:33060+ ssl  shahafster  SQL > DESCRIBE Labels;
+ERROR: 1146: Table 'shahafster.labels' doesn't exist
+ MySQL  localhost:33060+ ssl  shahafster  SQL > DESCRIBE Label;
++-------+-------------+------+-----+---------+-------+
+| Field | Type        | Null | Key | Default | Extra |
++-------+-------------+------+-----+---------+-------+
+| ID    | int         | NO   | PRI | NULL    |       |
+| Name  | varchar(45) | NO   |     | NULL    |       |
+| Color | varchar(45) | NO   |     | NULL    |       |
++-------+-------------+------+-----+---------+-------+
+3 rows in set (0.0061 sec)
+ MySQL  localhost:33060+ ssl  shahafster  SQL > DESCRIBE Comment;
++-----------+----------+------+-----+---------+-------+
+| Field     | Type     | Null | Key | Default | Extra |
++-----------+----------+------+-----+---------+-------+
+| ID        | int      | NO   | PRI | NULL    |       |
+| Moji      | int      | NO   |     | NULL    |       |
+| Text      | text     | NO   |     | NULL    |       |
+| Timestamp | datetime | NO   |     | NULL    |       |
+| Label_ID  | int      | NO   | PRI | NULL    |       |
++-----------+----------+------+-----+---------+-------+
+5 rows in set (0.0036 sec)
+ MySQL  localhost:33060+ ssl  shahafster  SQL > show tables;
++----------------------+
+| Tables_in_shahafster |
++----------------------+
+| Comment              |
+| Label                |
+| Likes                |
+| Logs                 |
+| Media                |
+| Tags                 |
+| User                 |
++----------------------+
+7 rows in set (0.0052 sec)
+ MySQL  localhost:33060+ ssl  shahafster  SQL > DROP TABLE Tags;
+Query OK, 0 rows affected (0.0103 sec)
+ MySQL  localhost:33060+ ssl  shahafster  SQL > show tables;
++----------------------+
+| Tables_in_shahafster |
++----------------------+
+| Comment              |
+| Label                |
+| Likes                |
+| Logs                 |
+| Media                |
+| User                 |
++----------------------+
+6 rows in set (0.0021 sec)
+ MySQL  localhost:33060+ ssl  shahafster  SQL > 
