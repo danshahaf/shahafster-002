@@ -478,7 +478,63 @@ div#sections div#posts div#populated-posts div.details div.label-container h5 {
 
 
 
+/* --------------- LABELS ------------ */
+div#users {
+    padding: 10px 15%;
+}
+div#users table {
+    width: 100%;
+    font-family: "Gill Sans";
+    text-align: center;
+}
 
+div#users table tr {
+    margin-top: 10px;
+    display: flex;
+    width: 100%;
+    padding: 5px 10px;
+}
+
+div#users table tbody tr {
+    border: 2px solid black;
+    border-radius: 5px;
+}
+
+div#users table tr th {
+    flex: 1;
+    font-size: 20px;
+}
+
+div#users table tr td {
+    flex: 1;
+    font-size: 18px;
+}
+
+div#users table tbody#populated-users tr td.timestamp {
+    font-size: 12px;
+}
+
+div#users table tr td.status-actions {
+    display: flex;
+}
+
+div#users table tr td.status-actions button {
+    border-radius: 5px;
+    border: 0px;
+    font-weight: bolder;
+    margin-right: 5px;
+    width: 25px;
+}
+
+div#users table tr td.status-actions button.deny {
+    background-color: #ff777e;
+}
+div#users table tr td.status-actions button.approve {
+    background-color: #56ff83;
+}
+div#users table tr td.status-actions button.pending {
+    background-color: #ffb300;
+}
 
 
 

@@ -24,9 +24,68 @@
     if($_POST['message'] == "get-existing-pins") {echo get_existing_pins();}
     
     if($_POST['message'] == "submit-new-user") {echo submit_new_user($_POST['name'], $_POST['pw']);}
+    
+    if($_POST['message'] == "populate-users-information") {echo populate_users();}
+    
+    if($_POST['message'] == "update-status") {echo update_user_status($_POST['id'], $_POST['status']);}
 
 
     // ------------------------------ FUNCTIONS --------------------------------
+    function update_user_status($userid, $status) {
+        try {
+            $c = connDB(); //establish db connection
+            $sql = "UPDATE User SET Status = '".$status."' WHERE ID = ".$userid.";";
+            $c -> prepare($sql) -> execute();
+            $c = null; //reset connection
+        } catch(PDOException $e) {
+            return "STATUS NOT CHANGED";
+        }
+        return populate_users();
+    }
+    
+    function nicer_timestamp($ugly) {
+        $months = ["Jan", "Feb", "Mar", "Apr", "May" ,"Jun", "Jul", "Aug", "Sep", "Oct", "Nov" ,"Dec"];
+        $year = substr($ugly, 0, 4);
+        $month = $months[intval(substr($ugly, 5, 2)) - 1];
+        $day = substr($ugly, 8, 2);
+        return $month.' '.$day.', '.$year;
+
+    }   
+    
+    function populate_users() {
+        try {
+            $c = connDB(); //establish connection
+            $sql = "SELECT ID, Name, PIN, TimeStamp, Status FROM User";
+            $s = $c -> prepare($sql);
+            $s -> execute();
+        
+        } catch (PDOException $e) {return $e;}
+        $backgrounds = [
+            "Pending" => "#FFFED3",
+            "Approved" => "#A5FABC",
+            "Denied" => "#FAA5A9",
+        ];
+        $data = "";
+        while($r = $s -> fetch(PDO::FETCH_ASSOC)) {
+            $data .=
+            '
+                <tr class = "user-container" style = "background-color: '.$backgrounds[$r['Status']].'">
+                    <td> '.$r['Name'].' </td>
+                    <td> '.$r['PIN'].' </td>
+                    <td> '.$r['Status'].' </td>
+                    <td class = "status-actions">
+                        <button class = "deny" onclick = "deny_status('.$r['ID'].')"><i class = "fa fa-times"></i></button>
+                        <button class = "approve" onclick = "approve_status('.$r['ID'].')"><i class = "fa fa-check"></i></button>
+                        <button class = "pending" onclick = "pending_status('.$r['ID'].')"><i class = "fa fa-minus"></i></button>
+                    </td>
+                    <td class = "timestamp"> '.nicer_timestamp($r['TimeStamp']).' </td>
+                    
+                </tr>
+            ';
+        }
+        return $data;
+    }
+    
     function submit_new_user($name, $pin) {
         try {
             $c = connDB(); //establish db connection

@@ -109,7 +109,22 @@
                     </div>
         
                     <div id = "users" style = "display: none" name = "section">
-        
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th> Name </th>
+                                    <th> PIN </th>
+                                    <th> STATUS </th>
+                                    <th>  </th>
+                                    <th> JOINED </th>
+                                    
+                                </tr>
+                            </thead>
+                            <tbody id = "populated-users">
+                                <!-- TO BE POPULATED BY PHP AND AJAX-->
+
+                            </tbody>
+                        </table>
                     </div>
         
                     <div id = "tags" style = "display: none" name = "section">
@@ -123,6 +138,55 @@
     </body>
     
     <script>
+        // ----------------- UPDATE USER STATUS FUNCTION ------------------
+        function deny_status(userid) {
+            $.ajax({
+                type: "POST",
+                url: "main.php",
+                data: {
+                    message: "update-status",
+                    status: "Denied",
+                    id: userid
+
+                },
+                success: function(data) {
+                    $("#populated-users").html(data);
+                }
+            });
+        }
+
+        function approve_status(userid) {
+            $.ajax({
+                type: "POST",
+                url: "main.php",
+                data: {
+                    message: "update-status",
+                    status: "Approved",
+                    id: userid
+
+                },
+                success: function(data) {
+                    $("#populated-users").html(data);
+                }
+            });
+        }
+
+        function pending_status(userid) {
+            $.ajax({
+                type: "POST",
+                url: "main.php",
+                data: {
+                    message: "update-status",
+                    status: "Pending",
+                    id: userid
+
+                },
+                success: function(data) {
+                    $("#populated-users").html(data);
+                }
+            });
+        }
+
         // ----------------- POPULATION FUNCTIONS ------------------
         function show_posts() {
             $.ajax({
@@ -327,19 +391,6 @@
             document.getElementById(sectionid).style.display = "block";
         }
 
-        function populate_labels() {
-            $.ajax({
-                type: "POST",
-                url: "main.php",
-                data: {
-                    message: "populate-labels"
-                },
-                success: function(data) {
-                    $("#blog").html(data)
-                }
-            });
-        }
-
 
         // --------- ASSIST FUNCTIONS ------------------
         alertify.minimalDialog || alertify.dialog('minimalDialog',function(){
@@ -364,7 +415,7 @@
             });
 
 
-            // ---- POPULATE LABELS FOR NEW POST
+            // ---- POPULATE LABELS SELECTION FOR NEW POST 
             $.ajax({
                 type: "POST",
                 url: "main.php",
@@ -373,6 +424,30 @@
                 },
                 success: function(data) {
                     $("#new-post-label-selection").html(data)
+                }
+            });
+
+            // ---- POPULATE LABELS TO ORGANIZE 
+            $.ajax({
+                type: "POST",
+                url: "main.php",
+                data: {
+                    message: "populate-labels"
+                },
+                success: function(data) {
+                    $("#blog").html(data)
+                }
+            });
+
+            // ---- POPULATE USERS TO MANAGE
+            $.ajax({
+                type: "POST",
+                url: "main.php",
+                data: {
+                    message: "populate-users-information"
+                },
+                success: function(data) {
+                    $("#populated-users").html(data)
                 }
             });
 
