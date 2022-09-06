@@ -33,15 +33,100 @@
     <body>
         <div class = "container">
             <div class = "upper">
+                <button class = "menu" id = "manage-menu-btn" onclick = "SignUpUser('')"> Sign Up </button>
                 <a href = "manage.html"> <img src = "attachments/logo_001.png" /> </a>
             </div>
-            <div class = "blog" id = "blog">
+            <!-- <div class = "blog" id = "blog" style = "display: none;"> -->
+            <div class = "blog" id = "blog" >
                 <!--- TO BE POPULATED BY PHP -->
             </div>
+            <div id = "hidden-forms">
+                <form id = "user-signup-form" style = "display: none;">
+                <!-- <form id = "user-signup-form"> -->
+                    <input type = "text" class = "user-signup-input" id = "user-signup-name" placeholder = "Full Name" required />
+                    <br />
+                    <input type = "number" class = "user-signup-input" id = "user-signup-pin" minlength = "4" maxlength = "4" placeholder = "4 digit number" required />
+                    <br />
+                    <p id = "user-signup-message" style = "color: red;"></p>
+                    <br/>
+                    <button class = "user-signup-submit" id = "user-signup-submit"> Submit <i class = "fa fa-check"></i></button>
+                </form>
+            </div>
+
         </div>
     </body>
     
     <script>
+        var user_signup_form = document.getElementById('user-signup-form');
+        $("#user-signup-form").submit(function(e) {
+            e.preventDefault();
+        });
+
+        $("#user-signup-submit").click(function() {
+            pin = document.getElementById("user-signup-pin").value;
+            username = document.getElementById("user-signup-name").value;
+            message = document.getElementById("user-signup-message");
+            existing_pins = []
+            $.ajax({
+                type: "POST",
+                url: "main.php",
+                data: {
+                    message: "get-existing-pins"
+                },
+                success: function(data) {
+                    existing_pins = data;
+                    console.log(existing_pins)
+                    if (pin.length != 4) {
+                        alertify.closeAll();
+                        SignUpUser('PIN must be exactly 4 digits');
+                        console.log('pin not 4');
+
+                        message.value = "PIN must be exactly 4 digits." 
+                    } 
+                    else if (existing_pins.includes(pin)) {
+                        console.log('pin in use');
+                        alertify.closeAll();
+                        SignUpUser('PIN already taken, try another.')
+                        message.value = "PIN already taken, try another." 
+                    }
+                    else {
+                        $.ajax({
+                            type: "POST",
+                            url: "main.php",
+                            data: {
+                                message: "submit-new-user",
+                                name: username,
+                                pw: pin
+                            },
+                            success: function(data) {
+                                alertify.success("User Request Sent Successfully");
+                                alertify.closeAll();
+                                document.getElementById("user-signup-pin").value = "";
+                                document.getElementById("user-signup-name").value = "";
+                                document.getElementById("user-signup-message").value = "";
+                                document.getElementById('user-signup-form').style.display = "none";
+                                $("#blog").html(data);
+                            }
+                        });
+                    }
+                }
+            });
+        });
+
+
+        function SignUpUser(message) {
+            var user_signup_form = document.getElementById('user-signup-form');
+            user_signup_form.style.display = "block";
+            document.getElementById("user-signup-message").innerHTML = message;
+            alertify.alert(
+                message, 
+                user_signup_form,
+                function() {
+                    alertify.error("Cancel User Sign Up"); // TODO : Maybe need to edit
+                }
+            ).set('labels', {ok:'Cancel'});
+        }
+
         $(document).ready(function() {
             $.ajax({
                 type: "POST",
@@ -52,7 +137,7 @@
                 success: function(data) {
                     $("#blog").html(data);
                 }
-            })
+            });
         });
     </script>
 </html>

@@ -3,6 +3,16 @@
     border-radius: 150px;
 }
 
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+input[type = number] {
+  -moz-appearance: textfield !important;
+}
+
 /* ------------------ CONTAINERS -------------------- */
 html {
     padding: 0px;
@@ -143,6 +153,23 @@ div.post div.details div.label-container h5 {
 
 }
 
+form#user-signup-form {
+    display: block;
+    width: 100%;
+    padding: 20px;
+}
+form#user-signup-form input.user-signup-input {
+    margin: 15px 20px;
+    border: 0px;
+    border-bottom: 2px solid black;
+}
+form#user-signup-form button.user-signup-submit {
+    border: 0px;
+    border-radius: 5px;
+    background-color: rgb(165, 255, 165);
+    padding: 5px 15px;
+    margin: 0px 30px;
+}
 
 
 

@@ -89,7 +89,7 @@
                         </div>
                     </div>
         
-                    <div id = "labels" style = "display: hidden" name = "section">
+                    <div id = "labels" style = "display: none" name = "section">
                         <div id = "label-prompter">
                             <h3> Add New Label !</h3>
                             </br>
@@ -320,7 +320,7 @@
        
         // -------- SHOW MENU SELECTED SECTION ------------
         function show_section(sectionid) {
-            var sections = document.getElementsByClassName("section");
+            var sections = document.getElementsByName("section");
             for (i = 0; i < sections.length; i++) {
                 sections[i].style.display = "none";
             }

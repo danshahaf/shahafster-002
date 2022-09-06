@@ -20,9 +20,49 @@
     if($_POST['message'] == "get-text-from-postid") {echo get_text_from_postid($_POST['id']);}
     
     if($_POST['message'] == "show-likes-from-postid") {echo show_likes_from_postid($_POST['id']);}
+    
+    if($_POST['message'] == "get-existing-pins") {echo get_existing_pins();}
+    
+    if($_POST['message'] == "submit-new-user") {echo submit_new_user($_POST['name'], $_POST['pw']);}
 
 
     // ------------------------------ FUNCTIONS --------------------------------
+    function submit_new_user($name, $pin) {
+        try {
+            $c = connDB(); //establish db connection
+            $sql = "SELECT MAX(ID)+1 FROM User;";
+            $s = $c->prepare($sql);
+            $s -> execute();
+            if ($max = $s -> fetchColumn()) $id = $max;
+            else $id = 1;   
+
+            $sql = "INSERT INTO User (ID, Name, PIN, Timestamp, Status) VALUES (".$id.", '".$name."', '".$pin."', NOW(), 'Pending');";
+            $c -> setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+            $c -> exec($sql);
+            $c = null; //close connection
+
+            // TODO : SET UP NEW COOKIE ON COMPUTER
+        } catch (PDOException $e) {return $e;}
+        return load_blog_comments();
+    }
+    
+    function get_existing_pins() {
+        $pins = array();
+        try {
+            $c = connDB(); //establish db connection
+            $sql = "SELECT PIN FROM User";
+            $s = $c -> prepare($sql);
+            $s -> execute();
+            $r = $s -> fetch(PDO::FETCH_ASSOC);
+            while($r = $s -> fetch(PDO::FETCH_ASSOC)) {
+                array_push($pins, $r['PIN']);
+            }
+        } catch (PDOException $e) {
+            return array();
+        }
+        return json_encode($pins);
+    }
+    
     function show_likes_from_postid($postid) {
         $data = "";
         try {
