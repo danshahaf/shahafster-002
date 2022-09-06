@@ -124,7 +124,6 @@
     
     <script>
         // ----------------- POPULATION FUNCTIONS ------------------
-        
         function show_posts() {
             $.ajax({
                 type: "POST",
@@ -162,7 +161,24 @@
         
         // --------- POST ACTIONS ------------
         function show_likes(postid) { // TODO
-            console.log("SHOWING LIKES OF THIS POST")
+            $.ajax({
+                type: "POST",
+                url: "main.php",
+                data: {
+                    message: "show-likes-from-postid",
+                    id: postid
+                },
+                success: function(data) {
+                    console.log(data)
+                    alertify.alert(
+                        'Users Likes - Post #' + postid, 
+                        data,
+                        function() {
+                            console.log("CLOSE LIKES SHOWN");
+                        }
+                    );
+                }
+            });
         }
 
         async function get_text_from_postid(postid) {

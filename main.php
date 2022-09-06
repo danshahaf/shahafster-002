@@ -18,9 +18,31 @@
     if($_POST['message'] == "edit-post") {echo edit_post($_POST['id'], $_POST['text']);}
     
     if($_POST['message'] == "get-text-from-postid") {echo get_text_from_postid($_POST['id']);}
+    
+    if($_POST['message'] == "show-likes-from-postid") {echo show_likes_from_postid($_POST['id']);}
 
 
     // ------------------------------ FUNCTIONS --------------------------------
+    function show_likes_from_postid($postid) {
+        $data = "";
+        try {
+            $c = connDB(); //establish db connection
+            $sql = "SELECT u.Name, l.Timestamp FROM User as u INNER JOIN Likes as l on l.User_ID = u.ID WHERE l.Comment_ID = ".$postid.";";
+            $s = $c -> prepare($sql);
+            $s -> execute();
+            $r = $s -> fetch(PDO::FETCH_ASSOC);
+            while($r = $s -> fetch(PDO::FETCH_ASSOC)) {
+                $data .= "<div class = 'like-shown'>".$r['Name']."</div>";
+            }
+        } catch (PDOException $e) {
+            return "ERROR FROM show_likes_from_postid()";
+        }
+        if ($data == "") {
+            $data = "No one liked this post";
+        }
+        return $data;
+    }
+    
     function get_text_from_postid($postid) {
         $text = "NOT-FETCHED";
         try {
@@ -34,6 +56,7 @@
             return "COULDN'T FETCH TEXT";
         }
         return $text;
+        
     }
     
     function edit_post($postid, $posttext) {
