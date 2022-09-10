@@ -28,7 +28,11 @@ I designed and coded everything by myself first in 2020, but took down to the si
 ## Feature Design Flow Charts
 
 ## Technologies
+#### Front End
 
+#### Back End
+
+#### Server End
 
 
 ---- ALL IMAGES WERE MADE USING THE [CANVA](https://www.canva.com/) DESIGN TOOL ----
